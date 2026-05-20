@@ -1,0 +1,63 @@
+{
+  mode: "peer",
+  listen: {
+    endpoints: ["tls/localhost:7448"],
+  },
+  connect: {
+    endpoints: ["tls/localhost:7447"],
+  },
+  open: {
+    return_conditions: {
+      connect_scouted: false,
+      declares: false,
+    },
+  },
+  scouting: {
+    multicast: {
+      enabled: false,
+      listen: false,
+    },
+    gossip: {
+      enabled: false,
+    },
+  },
+  access_control: {
+    enabled: true,
+    default_permission: "deny",
+    rules: [
+      {
+        id: "allow-demo-pubsub",
+        permission: "allow",
+        flows: ["ingress", "egress"],
+        messages: ["put", "declare_subscriber"],
+        key_exprs: ["demo/mtls-cn-acl"],
+      },
+    ],
+    subjects: [
+      {
+        id: "allowed-certificate-cns",
+        cert_common_names: ["host-a", "host-b"],
+      },
+    ],
+    policies: [
+      {
+        rules: ["allow-demo-pubsub"],
+        subjects: ["allowed-certificate-cns"],
+      },
+    ],
+  },
+  transport: {
+    link: {
+      protocols: ["tls"],
+      tls: {
+        root_ca_certificate: "run/zenoh-san/certs/ca.pem",
+        listen_private_key: "run/zenoh-san/certs/host-b-key.pem",
+        listen_certificate: "run/zenoh-san/certs/host-b.pem",
+        enable_mtls: true,
+        connect_private_key: "run/zenoh-san/certs/host-b-key.pem",
+        connect_certificate: "run/zenoh-san/certs/host-b.pem",
+        verify_name_on_connect: false,
+      },
+    },
+  },
+}

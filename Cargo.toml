@@ -1,0 +1,13 @@
+[package]
+name = "zenoh-san"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1"
+env_logger = "0.11.10"
+log = "0.4.29"
+rcgen = "0.14.8"
+time = "0.3"
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "time"] }
+zenoh = "1"
